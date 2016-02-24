@@ -12,7 +12,7 @@ const morpheusToSwagger = input => {
 
   const objectify = arr => arr.reduce((arr, a) => Object.assign(arr, a));
 
-  const toSwaggerType = tpe => {
+  const toSwaggerType = (tpe, noSchemaEmbed) => {
     // refer to
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
     const scalaToSwagger = {
@@ -48,16 +48,16 @@ const morpheusToSwagger = input => {
       }
     };
 
-    if (models[tpe]) {
-      return {
-        schema: {
-          $ref: `#/definitions/${tpe}`
-        }
+    if (models.filter(m => m.name === tpe).length) {
+      if (noSchemaEmbed) {
+        return { $ref: `#/definitions/${tpe}` };
+      } else {
+        return { schema: { $ref: `#/definitions/${tpe}` } };
       }
     } else {
        return scalaToSwagger[tpe] || { type: tpe };
     }
-  }
+  };
 
   const getRouteParamName = ({ name = 'unknown' }) => name;
 
@@ -120,11 +120,13 @@ const morpheusToSwagger = input => {
   const definitions = models.map(model => ({
     [model.name]: {
       type: 'object',
-      properties: objectify(model.members.map(member => ({
-        [member.name]: Object.assign({
-          description: member.desc
-        }, toSwaggerType(member.tpe.name))
-      })))
+      properties: objectify(model.members.map(member => {
+        return {
+          [member.name]: Object.assign({
+            description: member.desc
+          }, toSwaggerType(member.tpe.name, true))
+        };
+      }))
     }
   }));
 

@@ -54,4 +54,11 @@
       properties: 
         foo: 
           description: "a foo"
-          type: "string"
+          $ref: "#/definitions/Foo"
+    Foo: 
+      type: "object"
+      properties: 
+        bar: 
+          description: "a bar"
+          type: "number"
+          format: "float"

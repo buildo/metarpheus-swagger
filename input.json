@@ -4,9 +4,19 @@
     "members" : [ {
       "name" : "foo",
       "tpe" : {
-        "name" : "String"
+        "name" : "Foo"
       },
       "desc" : "a foo"
+    } ],
+    "desc" : "Represents nothing but a test"
+  }, {
+    "name" : "Foo",
+    "members" : [ {
+      "name" : "bar",
+      "tpe" : {
+        "name" : "Float"
+      },
+      "desc" : "a bar"
     } ],
     "desc" : "Represents nothing but a test"
   } ],
