@@ -13,11 +13,50 @@ const morpheusToSwagger = input => {
   const objectify = arr => arr.reduce((arr, a) => Object.assign(arr, a));
 
   const toSwaggerType = tpe => {
+    // refer to
+    // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
     const scalaToSwagger = {
-      String: 'string',
-      Int: 'number'
+      String: {
+        type: 'string'
+      },
+      Int: {
+        type: 'integer',
+        format: 'int32'
+      },
+      Long: {
+        type: 'integer',
+        format: 'int64'
+      },
+      Float: {
+        type: 'number',
+        format: 'float'
+      },
+      Double: {
+        type: 'number',
+        format: 'double'
+      },
+      Date: {
+        type: 'string',
+        format: 'date'
+      },
+      DateTime: {
+        type: 'string',
+        format: 'date-time'
+      },
+      Boolean: {
+        type: 'boolean'
+      }
     };
-    return scalaToSwagger[tpe] || tpe;
+
+    if (models[tpe]) {
+      return {
+        schema: {
+          $ref: `#/definitions/${tpe}`
+        }
+      }
+    } else {
+       return scalaToSwagger[tpe] || { type: tpe };
+    }
   }
 
   const getRouteParamName = ({ name = 'unknown' }) => name;
@@ -31,20 +70,18 @@ const morpheusToSwagger = input => {
   const getRouteParameters = (route) => {
     const pathParams = route.route
       .filter(part => Object.keys(part).indexOf('routeParam') !== -1)
-      .map(({ routeParam }) => ({
+      .map(({ routeParam }) => Object.assign({
         in: 'path',
         name: getRouteParamName(routeParam),
         required: routeParam.required,
-        type: toSwaggerType(routeParam.tpe.name)
-      }));
+      }, toSwaggerType(routeParam.tpe.name)));
 
     const { params = [], body } = route;
-    const queryParams = params.map(param => ({
+    const queryParams = params.map(param => Object.assign({
       in: 'query',
       name: param.name,
-      required: param.required,
-      type: toSwaggerType(param.tpe.name)
-    }));
+      required: param.required
+    }, toSwaggerType(param.tpe.name)));
 
     const bodyParams = body ? [{
       in: 'body',
@@ -84,10 +121,9 @@ const morpheusToSwagger = input => {
     [model.name]: {
       type: 'object',
       properties: objectify(model.members.map(member => ({
-        [member.name]: {
-          type: toSwaggerType(member.tpe.name),
+        [member.name]: Object.assign({
           description: member.desc
-        }
+        }, toSwaggerType(member.tpe.name))
       })))
     }
   }));

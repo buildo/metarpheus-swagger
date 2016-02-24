@@ -26,7 +26,8 @@
             "in": "query",
             "name": "bar",
             "required": false,
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "responses": {
@@ -74,8 +75,8 @@
       "type": "object",
       "properties": {
         "foo": {
-          "type": "string",
-          "description": "a foo"
+          "description": "a foo",
+          "type": "string"
         }
       }
     }
