@@ -25,7 +25,9 @@
             type: "number"
         responses: 
           200: 
-            description: "success"
+            description: "a Test"
+            schema: 
+              $ref: "#/definitions/Test"
     /auth: 
       post: 
         summary: "create a test"
@@ -42,7 +44,9 @@
               $ref: "#/definitions/Test"
         responses: 
           200: 
-            description: "success"
+            description: "a Test"
+            schema: 
+              $ref: "#/definitions/Test"
   definitions: 
     Test: 
       type: "object"

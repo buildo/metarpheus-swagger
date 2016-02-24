@@ -31,7 +31,10 @@
         ],
         "responses": {
           "200": {
-            "description": "success"
+            "description": "a Test",
+            "schema": {
+              "$ref": "#/definitions/Test"
+            }
           }
         }
       }
@@ -57,7 +60,10 @@
         ],
         "responses": {
           "200": {
-            "description": "success"
+            "description": "a Test",
+            "schema": {
+              "$ref": "#/definitions/Test"
+            }
           }
         }
       }

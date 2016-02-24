@@ -1,11 +1,14 @@
 const morpheusToSwagger = input => {
   const { models, routes } = input;
 
-  const successResponse = {
+  const successResponse = route => ({
     '200': {
-      description: 'success'
+      description: `a ${route.returns.name}`,
+      schema: {
+        $ref: `#/definitions/${route.returns.name}`
+      }
     }
-  };
+  });
 
   const objectify = arr => arr.reduce((arr, a) => Object.assign(arr, a));
 
@@ -71,7 +74,7 @@ const morpheusToSwagger = input => {
             'application/json'
           ],
           parameters,
-          responses: successResponse //TODO: use actual return types
+          responses: successResponse(route)
         }
       }
     }
