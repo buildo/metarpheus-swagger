@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/buildo/metarpheus-swagger.svg?branch=master)](https://travis-ci.org/buildo/metarpheus-swagger)
-
 # metarpheus-swagger
 metarpheus interpreter producing Swagger specs
+
+[![Build Status](https://travis-ci.org/buildo/metarpheus-swagger.svg?branch=master)](https://travis-ci.org/buildo/metarpheus-swagger)
 
 ## Try it!
 
