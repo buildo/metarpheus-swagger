@@ -66,5 +66,7 @@ const swaggerSpec = {
 };
 
 const swaggerJson = JSON.stringify(swaggerSpec, null, 2);
+const swaggerYaml = require('json2yaml').stringify(swaggerSpec);
 
 require('fs').writeFileSync('swagger.json', swaggerJson);
+require('fs').writeFileSync('swagger.yaml', swaggerYaml);

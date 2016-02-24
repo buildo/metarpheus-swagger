@@ -1,0 +1,25 @@
+{
+  "name": "metarpheus-swagger",
+  "version": "0.1.0",
+  "description": "metarpheus interpreter producing Swagger specs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --harmony_destructuring index.js",
+    "watch": "nodemon --harmony_destructuring index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buildo/metarpheus-swagger.git"
+  },
+  "author": "buildo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/buildo/metarpheus-swagger/issues"
+  },
+  "homepage": "https://github.com/buildo/metarpheus-swagger#readme",
+  "dependencies": {
+    "json2yaml": "^1.0.3",
+    "yamljs": "^0.2.5"
+  }
+}
