@@ -8,10 +8,11 @@ const morpheusToSwagger = input => {
   };
 
   const toSwaggerType = tpe => {
-    switch (tpe) {
-      case 'String': return 'string';
-      default: return tpe;
-    }
+    const scalaToSwagger = {
+      String: 'string',
+      Int: 'number'
+    };
+    return scalaToSwagger[tpe] || tpe;
   }
 
   const getRouteParamName = ({ name = 'unknown' }) => name;
@@ -23,15 +24,25 @@ const morpheusToSwagger = input => {
     return path;
   }, '');
 
-  const getRouteParameters = ({ route }) => {
-    return route
+  const getRouteParameters = (route) => {
+    const pathParams = route.route
       .filter(part => Object.keys(part).indexOf('routeParam') !== -1)
       .map(({ routeParam }) => ({
         in: 'path',
         name: getRouteParamName(routeParam),
         required: routeParam.required,
         type: toSwaggerType(routeParam.tpe.name)
-      }))
+      }));
+
+    const { params = [] } = route;
+    const queryParams = params.map(param => ({
+      in: 'query',
+      name: param.name,
+      required: param.required,
+      type: toSwaggerType(param.tpe.name)
+    }));
+
+    return [...pathParams, ...queryParams];
   };
 
 

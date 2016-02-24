@@ -8,7 +8,7 @@
   "paths": {
     "/auth/test/{unknown}": {
       "get": {
-        "summary": "get test resource",
+        "summary": "get /auth/test/:foo",
         "consumes": [
           "application/json"
         ],
@@ -21,6 +21,12 @@
             "name": "unknown",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "bar",
+            "required": false,
+            "type": "number"
           }
         ],
         "responses": {

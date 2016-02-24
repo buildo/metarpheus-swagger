@@ -24,13 +24,19 @@
         "required" : true
       }
     } ],
-    "params" : [ ],
+    "params" : [ {
+      "name" : "bar",
+      "tpe" : {
+        "name" : "Int"
+      },
+      "required" : false
+    } ],
     "authenticated" : false,
     "returns" : {
       "name" : "Test"
     },
     "ctrl" : [ "authenticationController", "test" ],
-    "desc" : "get test resource",
+    "desc" : "get /auth/test/:foo",
     "name" : [ "authenticationController", "test" ]
   } ]
 }
