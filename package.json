@@ -4,9 +4,10 @@
   "description": "metarpheus interpreter producing Swagger specs",
   "main": "index.js",
   "scripts": {
-    "start": "node --harmony_destructuring index.js",
-    "watch": "nodemon --harmony_destructuring index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --harmony_destructuring index.js input.json",
+    "watch": "nodemon --harmony_destructuring index.js input.json",
+    "test": "node --harmony_destructuring -- ./node_modules/ava/cli.js --verbose tests",
+    "test-watch": "nodemon --harmony_destructuring -- ./node_modules/ava/cli.js --verbose tests"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,9 @@
   },
   "homepage": "https://github.com/buildo/metarpheus-swagger#readme",
   "dependencies": {
-    "json2yaml": "^1.0.3",
-    "yamljs": "^0.2.5"
+    "json2yaml": "^1.0.3"
+  },
+  "devDependencies": {
+    "ava": "^0.12.0"
   }
 }

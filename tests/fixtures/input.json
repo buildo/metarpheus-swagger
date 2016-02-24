@@ -1,0 +1,36 @@
+{
+  "models" : [ {
+    "name" : "Test",
+    "members" : [ {
+      "name" : "foo",
+      "tpe" : {
+        "name" : "String"
+      },
+      "desc" : "a foo"
+    } ],
+    "desc" : "Represents nothing but a test"
+  } ],
+  "routes" : [ {
+    "method" : "get",
+    "route" : [ {
+      "str" : "auth"
+    }, {
+      "str" : "test"
+    }, {
+      "routeParam" : {
+        "tpe" : {
+          "name" : "String"
+        },
+        "required" : true
+      }
+    } ],
+    "params" : [ ],
+    "authenticated" : false,
+    "returns" : {
+      "name" : "Test"
+    },
+    "ctrl" : [ "authenticationController", "test" ],
+    "desc" : "get test resource",
+    "name" : [ "authenticationController", "test" ]
+  } ]
+}
