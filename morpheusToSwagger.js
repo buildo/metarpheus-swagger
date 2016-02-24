@@ -7,6 +7,8 @@ const morpheusToSwagger = input => {
     }
   };
 
+  const objectify = arr => arr.reduce((arr, a) => Object.assign(arr, a));
+
   const toSwaggerType = tpe => {
     const scalaToSwagger = {
       String: 'string',
@@ -20,7 +22,6 @@ const morpheusToSwagger = input => {
   const getRoutePath = ({ route }) => route.reduce((path, part) => {
     if (part.str) return `${path}/${part.str}`;
     if (part.routeParam) return `${path}/{${getRouteParamName(part.routeParam)}}`;
-    //TODO: any other cases? Body params? Query params?
     return path;
   }, '');
 
@@ -34,7 +35,7 @@ const morpheusToSwagger = input => {
         type: toSwaggerType(routeParam.tpe.name)
       }));
 
-    const { params = [] } = route;
+    const { params = [], body } = route;
     const queryParams = params.map(param => ({
       in: 'query',
       name: param.name,
@@ -42,7 +43,16 @@ const morpheusToSwagger = input => {
       type: toSwaggerType(param.tpe.name)
     }));
 
-    return [...pathParams, ...queryParams];
+    const bodyParams = body ? [{
+      in: 'body',
+      name: 'body',
+      required: true,
+      schema: {
+        $ref: `#/definitions/${body.tpe.name}`
+      }
+    }] : [];
+
+    return [...pathParams, ...queryParams, ...bodyParams];
   };
 
 
@@ -67,6 +77,18 @@ const morpheusToSwagger = input => {
     }
   });
 
+  const definitions = models.map(model => ({
+    [model.name]: {
+      type: 'object',
+      properties: objectify(model.members.map(member => ({
+        [member.name]: {
+          type: toSwaggerType(member.tpe.name),
+          description: member.desc
+        }
+      })))
+    }
+  }));
+
   const swaggerSpec = {
     swagger: '2.0',
     info: {
@@ -74,7 +96,8 @@ const morpheusToSwagger = input => {
       version: '0.1.0',
       title: 'metarpheus-swagger',
     },
-    paths: paths.reduce((paths, path) => Object.assign(paths, path))
+    paths: objectify(paths),
+    definitions: objectify(definitions)
   };
 
   return swaggerSpec;

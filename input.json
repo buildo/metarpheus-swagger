@@ -38,5 +38,23 @@
     "ctrl" : [ "authenticationController", "test" ],
     "desc" : "get /auth/test/:foo",
     "name" : [ "authenticationController", "test" ]
+  }, {
+    "method" : "post",
+    "route" : [ {
+      "str" : "auth"
+    } ],
+    "params" : [ ],
+    "authenticated" : false,
+    "returns" : {
+      "name" : "Test"
+    },
+    "body" : {
+      "tpe" : {
+        "name" : "Test"
+      }
+    },
+    "ctrl" : [ "authenticationController", "create" ],
+    "desc" : "create a test",
+    "name" : [ "authenticationController", "create" ]
   } ]
 }

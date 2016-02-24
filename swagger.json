@@ -35,6 +35,43 @@
           }
         }
       }
+    },
+    "/auth": {
+      "post": {
+        "summary": "create a test",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Test"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Test": {
+      "type": "object",
+      "properties": {
+        "foo": {
+          "type": "string",
+          "description": "a foo"
+        }
+      }
     }
   }
 }
