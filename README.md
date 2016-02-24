@@ -9,6 +9,8 @@ npm start
 
 Will read `input.json` and produce `swagger.json` and `swagger.yaml`.
 
+You can copy-paste the yaml output to http://editor.swagger.io and see the result.
+
 ## Development
 
 ```sh
