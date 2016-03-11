@@ -34,6 +34,7 @@ const morpheusToSwagger = input => {
       case "Date": return { type: 'string', format: 'date' };
       case "DateTime": return { type: 'string', format: 'date-time' };
       case "Boolean": return { type: 'boolean' };
+      case "JsValue": return { type: 'object' };
       case "Option": return toSwaggerType(args[0]);
       default: console.log(`unknown type '${name}'`); return { type: name };
     };
