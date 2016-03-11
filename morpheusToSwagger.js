@@ -1,3 +1,5 @@
+const objectAssignDeep = require('object-assign-deep');
+
 const morpheusToSwagger = input => {
   const { models, routes } = input;
 
@@ -10,53 +12,32 @@ const morpheusToSwagger = input => {
     }
   });
 
-  const objectify = arr => arr.reduce((arr, a) => Object.assign(arr, a));
+  const objectify = arr => arr.reduce((arr, a) => objectAssignDeep(arr, a));
 
-  const toSwaggerType = (tpe, noSchemaEmbed) => {
+  const toSwaggerType = ({ name, args }, noSchemaEmbed) => {
+    if (models.filter(m => m.name === name).length) {
+      if (noSchemaEmbed) {
+        return { $ref: `#/definitions/${name}` };
+      } else {
+        return { schema: { $ref: `#/definitions/${name}` } };
+      }
+    }
+
     // refer to
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
-    const scalaToSwagger = {
-      String: {
-        type: 'string'
-      },
-      Int: {
-        type: 'integer',
-        format: 'int32'
-      },
-      Long: {
-        type: 'integer',
-        format: 'int64'
-      },
-      Float: {
-        type: 'number',
-        format: 'float'
-      },
-      Double: {
-        type: 'number',
-        format: 'double'
-      },
-      Date: {
-        type: 'string',
-        format: 'date'
-      },
-      DateTime: {
-        type: 'string',
-        format: 'date-time'
-      },
-      Boolean: {
-        type: 'boolean'
-      }
+    switch (name) {
+      case "String": return { type: 'string' };
+      case "Int": return { type: 'integer', format: 'int32' };
+      case "Long": return { type: 'integer', format: 'int64' };
+      case "Float": return { type: 'number', format: 'float' };
+      case "Double": return { type: 'number', format: 'double' };
+      case "Date": return { type: 'string', format: 'date' };
+      case "DateTime": return { type: 'string', format: 'date-time' };
+      case "Boolean": return { type: 'boolean' };
+      case "Option": return toSwaggerType(args[0]);
+      default: console.log(`unknown type '${name}'`); return { type: name };
     };
 
-    if (models.filter(m => m.name === tpe).length) {
-      if (noSchemaEmbed) {
-        return { $ref: `#/definitions/${tpe}` };
-      } else {
-        return { schema: { $ref: `#/definitions/${tpe}` } };
-      }
-    } else {
-       return scalaToSwagger[tpe] || { type: tpe };
-    }
   };
 
   const getRouteParamName = ({ name = 'unknown' }) => name;
@@ -74,14 +55,14 @@ const morpheusToSwagger = input => {
         in: 'path',
         name: getRouteParamName(routeParam),
         required: routeParam.required,
-      }, toSwaggerType(routeParam.tpe.name)));
+      }, toSwaggerType(routeParam.tpe)));
 
     const { params = [], body } = route;
     const queryParams = params.map(param => Object.assign({
       in: 'query',
       name: param.name,
       required: param.required
-    }, toSwaggerType(param.tpe.name)));
+    }, toSwaggerType(param.tpe)));
 
     const bodyParams = body ? [{
       in: 'body',
@@ -124,7 +105,7 @@ const morpheusToSwagger = input => {
         return {
           [member.name]: Object.assign({
             description: member.desc
-          }, toSwaggerType(member.tpe.name, true))
+          }, toSwaggerType(member.tpe, true))
         };
       }))
     }

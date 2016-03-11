@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/buildo/metarpheus-swagger#readme",
   "dependencies": {
-    "json2yaml": "^1.0.3"
+    "json2yaml": "^1.0.3",
+    "object-assign-deep": "0.0.4"
   },
   "devDependencies": {
     "ava": "^0.12.0"
