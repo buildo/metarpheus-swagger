@@ -4,10 +4,10 @@
   "description": "metarpheus interpreter producing Swagger specs",
   "main": "index.js",
   "scripts": {
-    "start": "node --harmony-destructuring index.js input.json",
-    "watch": "nodemon --harmony-destructuring index.js input.json",
-    "test": "node --harmony-destructuring -- ./node_modules/ava/cli.js --verbose tests",
-    "test-watch": "nodemon --harmonydestructuring- -- ./node_modules/ava/cli.js --verbose tests"
+    "start": "node --harmony-destructuring --harmony_default_parameters index.js input.json",
+    "watch": "nodemon --harmony-destructuring --harmony_default_parameters index.js input.json",
+    "test": "node --harmony-destructuring --harmony_default_parameters -- ./node_modules/ava/cli.js --verbose tests",
+    "test-watch": "nodemon --harmony-destructuring --harmony_default_parameters -- ./node_modules/ava/cli.js --verbose tests"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/buildo/metarpheus-swagger#readme",
   "dependencies": {
+    "argparse": "^1.0.6",
     "json2yaml": "^1.0.3",
     "object-assign-deep": "0.0.4"
   },
