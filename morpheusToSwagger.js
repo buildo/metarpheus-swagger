@@ -1,6 +1,6 @@
 const objectAssignDeep = require('object-assign-deep');
 
-const morpheusToSwagger = input => {
+const morpheusToSwagger = (input, customTypes = {}) => {
   const { models, routes } = input;
 
   const successResponse = route => ({
@@ -23,6 +23,10 @@ const morpheusToSwagger = input => {
       }
     }
 
+    if (customTypes[name]) {
+      return customTypes[name];
+    }
+
     // refer to
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
     switch (name) {
@@ -35,7 +39,9 @@ const morpheusToSwagger = input => {
       case "DateTime": return { type: 'string', format: 'date-time' };
       case "Boolean": return { type: 'boolean' };
       case "Option": return toSwaggerType(args[0]);
-      default: console.log(`unknown type '${name}'`); return { type: name };
+      default:
+        console.log(`unknown type '${name}'`);
+        return { type: name };
     };
 
   };
