@@ -1,15 +1,13 @@
 const objectAssignDeep = require('object-assign-deep');
+const _ = require('lodash');
 
 const morpheusToSwagger = (input, customTypes = {}) => {
   const { models, routes } = input;
 
   const successResponse = route => ({
-    '200': {
-      description: `a ${route.returns.name}`,
-      schema: {
-        $ref: `#/definitions/${route.returns.name}`
-      }
-    }
+    '200': Object.assign({
+      description: `a ${route.returns.name}`
+    }, toSwaggerType(route.returns))
   });
 
   const objectify = arr => arr.reduce((arr, a) => objectAssignDeep(arr, a));
@@ -40,6 +38,9 @@ const morpheusToSwagger = (input, customTypes = {}) => {
       case "Boolean": return { type: 'boolean' };
       case "JsValue": return { type: 'object' };
       case "Option": return toSwaggerType(args[0]);
+      case "List":
+        const schema = { type: 'array', items: toSwaggerType(args[0], true) };
+        return (noSchemaEmbed ? schema : { schema });
       default:
         console.log(`unknown type '${name}'`);
         return { type: name };
@@ -83,8 +84,7 @@ const morpheusToSwagger = (input, customTypes = {}) => {
     return [...pathParams, ...queryParams, ...bodyParams];
   };
 
-
-  const paths = routes.map(route => {
+  const pathArray = routes.map(route => {
     const path = getRoutePath(route);
     const parameters = getRouteParameters(route);
 
@@ -92,12 +92,6 @@ const morpheusToSwagger = (input, customTypes = {}) => {
       [path]: {
         [route.method]: {
           summary: route.desc,
-          consumes: [
-            'application/json'
-          ],
-          produces: [
-            'application/json'
-          ],
           parameters,
           responses: successResponse(route)
         }
@@ -105,18 +99,40 @@ const morpheusToSwagger = (input, customTypes = {}) => {
     }
   });
 
-  const definitions = models.map(model => ({
-    [model.name]: {
-      type: 'object',
-      properties: objectify(model.members.map(member => {
-        return {
-          [member.name]: Object.assign({
-            description: member.desc
-          }, toSwaggerType(member.tpe, true))
-        };
-      }))
+  const dedupeParameters = path => Object.keys(path).reduce((p, k) => {
+    p[k] = Object.assign(path[k], {
+      parameters: _.uniqBy(path[k].parameters, 'name')
+    });
+    return p;
+  }, {});
+
+  const definitions = models.map(model => {
+    const isEnum = !!model.values;
+
+    if (isEnum) {
+      return {
+        [model.name]: {
+          type: 'string',
+          enum: model.values.map(value => value.name)
+        }
+      };
     }
-  }));
+
+    return {
+      [model.name]: {
+        type: 'object',
+        properties: objectify(model.members.map(member => {
+          return {
+            [member.name]: Object.assign({
+              description: member.desc
+            }, toSwaggerType(member.tpe, true))
+          };
+        }))
+      }
+    }
+  });
+
+  const paths = objectify(pathArray);
 
   const swaggerSpec = {
     swagger: '2.0',
@@ -125,7 +141,9 @@ const morpheusToSwagger = (input, customTypes = {}) => {
       version: '0.1.0',
       title: 'metarpheus-swagger',
     },
-    paths: objectify(paths),
+    consumes: [ 'application/json' ],
+    produces: [ 'application/json' ],
+    paths: objectify(Object.keys(paths).map(k => ({ [k]: dedupeParameters(paths[k]) }))),
     definitions: objectify(definitions)
   };
 

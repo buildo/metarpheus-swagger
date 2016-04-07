@@ -22,6 +22,7 @@
   "dependencies": {
     "argparse": "^1.0.6",
     "json2yaml": "^1.0.3",
+    "lodash": "^4.8.2",
     "object-assign-deep": "0.0.4"
   },
   "devDependencies": {
